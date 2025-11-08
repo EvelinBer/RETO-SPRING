@@ -1,5 +1,6 @@
 package com.reto.spring.demo.controllers;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,16 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-@RequiredArgsConstructor // se utilizan para llamar los servicios
-@RestController // Indica que es un controlador de tipo REST
-@RequestMapping("/restaurante") // Indica que se mapean las rutas a este controlador
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/restaurante")
 public class RestauranteController {
     private final IRestauranteService restauranteService;
+    
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @PostMapping("/crear")
     public String crearRestaurante (@RequestBody RestauranteDto restauranteDto) {
         String entity = restauranteService.crearRestaurante(restauranteDto);
         return entity;
     }
-    
 }

@@ -1,5 +1,6 @@
 package com.reto.spring.demo.controllers;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,18 +12,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@RequiredArgsConstructor // se utilizan para llamar los servicios
-@RestController // Indica que es un controlador de tipo REST
-@RequestMapping("/usuario") // Indica que se mapean las rutas a este controlador
-
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/usuario")
 public class UsuarioController {
 
     private final IUsuarioService usuarioService;
-    @PostMapping("/crear/propietario") // Indica que se mapean las rutas a este controlador
+    
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')") // Indica que esta peticion solo puede ser ejecutada por usuarios con rol administrador 
+    @PostMapping("/crear/propietario")
     public String crearPropietario(@RequestBody @Valid UsuarioDto usuarioDto) {
         String entity = usuarioService.crearPropietario(usuarioDto);
         return entity;
     }
+    
+    @PreAuthorize("hasAuthority('PROPIETARIO')")
+    @PostMapping("/crear/empleado")
+    public String crearEmpleado(@RequestBody @Valid UsuarioDto usuarioDto) {
+        String entity = usuarioService.crearEmpleado(usuarioDto);
+        return entity;
+    }
 
-
+    @PostMapping("/crear/cliente")
+    public String crearCliente(@RequestBody @Valid UsuarioDto usuarioDto) {
+        String entity = usuarioService.crearCliente(usuarioDto);
+        return entity;
+    }
 }
