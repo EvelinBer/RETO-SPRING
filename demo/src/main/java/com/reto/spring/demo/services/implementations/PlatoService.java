@@ -1,5 +1,7 @@
 package com.reto.spring.demo.services.implementations;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.reto.spring.demo.dtos.ActualizarPlatoDto;
@@ -67,5 +69,21 @@ public String deshabilitarPlato(Integer id) {
     plato.setActivo(false);
     platoRepository.save(plato);
     return "Plato deshabilitado exitosamente";    
+}
+public Page<PlatoDto> obtenerPlatoCategoria(Pageable pageable, String categoria) {
+    Page<Plato> platos = platoRepository.findByCategoria(categoria, pageable);
+
+    return platos.map(plato -> {
+        PlatoDto platoDto = new PlatoDto();
+        platoDto.setId(plato.getId());
+        platoDto.setNombre(plato.getNombre());
+        platoDto.setDescripcion(plato.getDescripcion());
+        platoDto.setUrlImagen(plato.getUrlImagen());
+        platoDto.setPrecio(plato.getPrecio());
+        platoDto.setCategoria(plato.getCategoria());
+        platoDto.setRestauranteId(plato.getRestaurante().getId());
+        return platoDto;
+    });
+
 }
 }

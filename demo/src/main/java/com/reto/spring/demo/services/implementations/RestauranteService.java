@@ -1,7 +1,10 @@
 package com.reto.spring.demo.services.implementations;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.reto.spring.demo.dtos.RestauranteDto;
+import com.reto.spring.demo.dtos.responses.RestauranteResponse;
 import com.reto.spring.demo.entities.Restaurante;
 import com.reto.spring.demo.entities.RolUsuario;
 import com.reto.spring.demo.entities.Usuario;
@@ -55,4 +58,14 @@ public class RestauranteService implements IRestauranteService {
         restauranteRepository.save(restaurante);
         return "Restaurante creado exitosamente";
     }
+
+   public Page<RestauranteResponse> obtenerRestauranteAlfabetico(Pageable pageable) {
+    Page<Restaurante> restaurantes = restauranteRepository.findAllByOrderByNombreAsc(pageable);
+    // porque hace esto ademas de contruir el objeto***********
+    return restaurantes.map(restaurante -> RestauranteResponse.builder()
+            .nombre(restaurante.getNombre())
+            .urlLogo(restaurante.getUrlLogo())
+            .build());
+            //este metodo es para devolver la pagina con los restaurantes en orden alfabetico
+}           // lo mapea a un objeto RestauranteResponse que es el que se va a devolver al cliente
 }
